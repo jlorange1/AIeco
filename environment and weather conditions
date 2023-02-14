@@ -1,0 +1,54 @@
+// Define the different types of environments
+const ENVIRONMENTS = ['Water', 'Land', 'Forest', 'Desert'];
+
+// Define an array of possible weather conditions
+const WEATHER_CONDITIONS = ['sunny', 'cloudy', 'rainy', 'snowy'];
+
+// Create a function that generates a random environment
+function generateEnvironment() {
+  // Get a random index from the array of environments
+  const index = Math.floor(Math.random() * ENVIRONMENTS.length);
+  // Return the environment at the chosen index
+  return ENVIRONMENTS[index];
+}
+
+// Define a function that generates random weather conditions for each cell in a grid
+function generateWeatherGrid(numRows, numCols) {
+  // Create an empty grid to hold the weather conditions
+  const weatherGrid = [];
+
+  // Loop through each row and column in the grid
+  for (let row = 0; row < numRows; row++) {
+    // Create a new array to hold the weather conditions for this row
+    const rowWeather = [];
+    for (let col = 0; col < numCols; col++) {
+      // Choose a random weather condition from the array of possible conditions
+      const weatherIndex = Math.floor(Math.random() * WEATHER_CONDITIONS.length);
+      const weatherCondition = WEATHER_CONDITIONS[weatherIndex];
+
+      // Add the weather condition to the row's array
+      rowWeather.push(weatherCondition);
+    }
+    // Add the row's array to the weatherGrid array
+    weatherGrid.push(rowWeather);
+  }
+
+  // Return the weatherGrid array
+  return weatherGrid;
+}
+
+// Create an array to hold the world environments
+const worldEnvironments = [];
+
+// Generate a list of environments and add them to the array
+for (let i = 0; i < 10; i++) {
+  const environment = generateEnvironment();
+  worldEnvironments.push(environment);
+}
+
+// Generate a 5x5 weather grid and log it to the console
+const myWeatherGrid = generateWeatherGrid(5, 5);
+console.log(myWeatherGrid);
+
+// Log the array of world environments to the console
+console.log(worldEnvironments);
