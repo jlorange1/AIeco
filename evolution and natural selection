@@ -1,0 +1,84 @@
+// Define the Organism class
+class Organism {
+  constructor(x, y, size, speed, color, isPredator, isPrey, breedRate, groupRadius) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = speed;
+    this.color = color;
+    this.isPredator = isPredator;
+    this.isPrey = isPrey;
+    this.hunger = 0;
+    this.maxHunger = 100;
+    this.groupRadius = groupRadius; // The radius in which the organism looks for group members
+    this.groupHeading = { x: 0, y: 0 }; // The average heading of the group
+    this.groupCenter = { x: this.x, y: this.y }; // The center of the group
+    this.packRadius = 100; // The radius in which the organism looks for pack members
+    this.packHeading = { x: 0, y: 0 }; // The average heading of the pack
+    this.packCenter = { x: this.x, y: this.y }; // The center of the pack
+    this.breedRate = breedRate; // The rate at which the organism breeds
+    this.breedTimer = Math.random() * 1000; // The timer for breeding
+    this.offspringSize = 5; // The size of the offspring
+    this.offspringSpeed = 2; // The speed of the offspring
+  }
+
+  // Update the organism's position and behavior
+  update() {
+    this.move();
+    this.hunger++;
+
+    // Breed if conditions are met
+    if (this.canBreed()) {
+      this.breed();
+    }
+  }
+
+  // Move the organism
+  move() {
+    if (this.isPrey) {
+      this.herd(organisms);
+    } else if (this.isPredator) {
+      this.hunt(organisms);
+      this.pack(organisms);
+    }
+    let angle = Math.random() * Math.PI * 2;
+    this.x += Math.cos(angle) * this.speed;
+    this.y += Math.sin(angle) * this.speed;
+  }
+
+  // Breed if conditions are met
+  canBreed() {
+    if (this.hunger > this.maxHunger / 2) {
+      this.breedTimer += 1;
+      if (this.breedTimer >= 1000 / this.breedRate) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Breed with another organism of the same type
+  breed() {
+    let offspringX = this.x + (Math.random() * 40) - 20;
+    let offspringY = this.y + (Math.random() * 40) - 20;
+    let breedRate = this.breedRate + (Math.random() * 0.1) - 0.05;
+    let groupRadius = this.groupRadius + (Math.random() * 10) - 5;
+    let offspring = new Organism(offspringX, offspringY, this.offspringSize, this.offspringSpeed, this.color, this.isPredator, this.isPrey, breedRate, groupRadius);
+    if (this.isPredator) {
+      predators.push(offspring);
+    } else if (this.isPrey) {
+      prey.push(offspring);
+    }
+    this.breedTimer = 0;
+  }
+
+  // Herd with other organisms of the same type
+  herd(organisms) {
+    let groupMembers = [];
+    for (let i = 0; i < organisms.length; i++) {
+      let other = organisms[i];
+      if (other.isPrey && this.distanceTo(other) < this.groupRadius) {
+        groupMembers.push(other);
+      }
+    }
+    if (groupMembers.length > 0) {
