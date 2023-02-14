@@ -1,0 +1,85 @@
+// Define the Organism class
+class Organism {
+  constructor(x, y, size, speed, color, isPredator, isPrey) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = speed;
+    this.color = color;
+    this.isPredator = isPredator;
+    this.isPrey = isPrey;
+    this.hunger = 0;
+    this.maxHunger = 100;
+    this.groupRadius = 50; // The radius in which the organism looks for group members
+    this.groupHeading = { x: 0, y: 0 }; // The average heading of the group
+    this.groupCenter = { x: this.x, y: this.y }; // The center of the group
+  }
+
+  // Update the organism's position and behavior
+  update(organisms) {
+    if (this.isPrey) {
+      this.herding(organisms);
+    }
+    if (this.isPredator) {
+      this.packing(organisms);
+    }
+    this.move();
+    this.eat(organisms);
+  }
+
+  // Move the organism randomly
+  move() {
+    this.x += (Math.random() - 0.5) * this.speed;
+    this.y += (Math.random() - 0.5) * this.speed;
+  }
+
+  // Try to eat other organisms
+  eat(organisms) {
+    for (let i = 0; i < organisms.length; i++) {
+      let other = organisms[i];
+      if (other != this && this.isPrey && other.isPredator && this.distanceTo(other) < this.size + other.size) {
+        // This organism is prey and the other organism is a predator
+        this.hunger = 0;
+        organisms.splice(i, 1);
+        return;
+      } else if (other != this && this.isPredator && other.isPrey && this.distanceTo(other) < this.size + other.size) {
+        // This organism is a predator and the other organism is prey
+        other.hunger = 0;
+        organisms.splice(organisms.indexOf(this), 1);
+        return;
+      }
+    }
+    this.hunger++;
+  }
+
+  // Calculate the distance to another organism
+  distanceTo(other) {
+    let dx = this.x - other.x;
+    let dy = this.y - other.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  // Herd with other organisms of the same type
+  herding(organisms) {
+    let groupMembers = [];
+    for (let i = 0; i < organisms.length; i++) {
+      let other = organisms[i];
+      if (other.isPrey && this.distanceTo(other) < this.groupRadius) {
+        groupMembers.push(other);
+      }
+    }
+    if (groupMembers.length > 0) {
+      // Calculate the center of the group
+      let center = { x: 0, y: 0 };
+      for (let i = 0; i < groupMembers.length; i++) {
+        center.x += groupMembers[i].x;
+        center.y += groupMembers[i].y;
+      }
+      center.x /= groupMembers.length;
+      center.y /= groupMembers.length;
+      this.groupCenter = center;
+
+      // Calculate the average heading of the group
+      let heading = { x: 0, y: 0 };
+      for (let i = 0; i < groupMembers.length; i++) {
+        heading.x += groupMembers[i].x
