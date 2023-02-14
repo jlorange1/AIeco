@@ -1,0 +1,66 @@
+// Define the different types of environments and their growth rates
+const ENVIRONMENTS = {
+  'Water': 0,
+  'Land': 1,
+  'Forest': 2,
+  'Desert': 3,
+};
+
+// Define the different weather conditions and their effects on the environment
+const WEATHER_CONDITIONS = {
+  'sunny': {
+    'Land': 0.1,
+    'Desert': 0.2,
+    'Forest': -0.1,
+  },
+  'cloudy': {
+    'Land': 0,
+    'Desert': 0.1,
+    'Forest': 0.1,
+  },
+  'rainy': {
+    'Land': -0.1,
+    'Desert': -0.2,
+    'Forest': 0.2,
+  },
+  'snowy': {
+    'Land': -0.2,
+    'Desert': -0.3,
+    'Forest': 0.1,
+  },
+};
+
+// Create a function that applies the weather rules to the environment grid
+function applyWeatherRules(environmentGrid, weatherGrid) {
+  // Loop through each row and column in the grid
+  for (let row = 0; row < environmentGrid.length; row++) {
+    for (let col = 0; col < environmentGrid[row].length; col++) {
+      const environment = environmentGrid[row][col];
+      const weather = weatherGrid[row][col];
+
+      // Look up the growth rate for this environment based on the current weather
+      const growthRate = WEATHER_CONDITIONS[weather][environment];
+
+      // Apply the growth rate to the environment
+      environmentGrid[row][col] = Math.max(0, environment + growthRate);
+    }
+  }
+}
+
+// Create an array to hold the world environments
+const worldEnvironments = [];
+
+// Generate a list of environments and add them to the array
+for (let i = 0; i < 10; i++) {
+  const environment = generateEnvironment();
+  worldEnvironments.push(environment);
+}
+
+// Generate a 5x5 weather grid
+const myWeatherGrid = generateWeatherGrid(5, 5);
+
+// Apply the weather rules to the environment grid
+applyWeatherRules(worldEnvironments, myWeatherGrid);
+
+// Log the array of world environments to the console
+console.log(worldEnvironments);
