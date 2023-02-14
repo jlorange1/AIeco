@@ -1,0 +1,91 @@
+// Define a virtual organism class
+class Organism {
+  constructor(x, y, speed, size, color) {
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
+    this.size = size;
+    this.color = color;
+  }
+
+  // Move the organism in a random direction
+  move() {
+    this.x += (Math.random() - 0.5) * this.speed;
+    this.y += (Math.random() - 0.5) * this.speed;
+  }
+
+  // Draw the organism on a canvas
+  draw(ctx) {
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  // Reproduce a new organism with a slightly mutated genetic trait
+  reproduce() {
+    let offspring = new Organism(this.x, this.y, this.speed, this.size, this.color);
+    offspring.color = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+    return offspring;
+  }
+}
+
+// Define a virtual ecosystem class
+class Ecosystem {
+  constructor(width, height, numOrganisms) {
+    this.width = width;
+    this.height = height;
+    this.organisms = [];
+
+    // Generate initial population of organisms
+    for (let i = 0; i < numOrganisms; i++) {
+      let x = Math.random() * width;
+      let y = Math.random() * height;
+      let speed = 1;
+      let size = 5;
+      let color = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+      this.organisms.push(new Organism(x, y, speed, size, color));
+    }
+  }
+
+  // Update the state of the ecosystem
+  update() {
+    // Move organisms
+    for (let i = 0; i < this.organisms.length; i++) {
+      this.organisms[i].move();
+    }
+
+    // Reproduce organisms
+    let newOrganisms = [];
+    for (let i = 0; i < this.organisms.length; i++) {
+      let offspring = this.organisms[i].reproduce();
+      newOrganisms.push(offspring);
+    }
+
+    // Add new organisms to population
+    this.organisms.push(...newOrganisms);
+  }
+
+  // Draw the ecosystem on a canvas
+  draw(ctx) {
+    // Clear canvas
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, this.width, this.height);
+
+    // Draw organisms
+    for (let i = 0; i < this.organisms.length; i++) {
+      this.organisms[i].draw(ctx);
+    }
+  }
+}
+
+// Set up the simulation
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+let ecosystem = new Ecosystem(canvas.width, canvas.height, 10);
+
+// Run the simulation loop
+setInterval(() => {
+  ecosystem.update();
+  ecosystem.draw(ctx);
+}, 50);
