@@ -1,0 +1,90 @@
+// Define the different types of environments and their growth rates
+const ENVIRONMENTS = {
+  'Water': 0,
+  'Land': 1,
+  'Forest': 2,
+  'Desert': 3,
+};
+
+// Define the different weather conditions and their effects on the environment
+const WEATHER_CONDITIONS = {
+  'sunny': {
+    'Land': 0.1,
+    'Desert': 0.2,
+    'Forest': -0.1,
+  },
+  'cloudy': {
+    'Land': 0,
+    'Desert': 0.1,
+    'Forest': 0.1,
+  },
+  'rainy': {
+    'Land': -0.1,
+    'Desert': -0.2,
+    'Forest': 0.2,
+  },
+  'snowy': {
+    'Land': -0.2,
+    'Desert': -0.3,
+    'Forest': 0.1,
+  },
+};
+
+// Create a function that generates a random environment
+function generateEnvironment() {
+  // Get a random index from the array of environments
+  const index = Math.floor(Math.random() * Object.keys(ENVIRONMENTS).length);
+  // Return the environment at the chosen index
+  return Object.keys(ENVIRONMENTS)[index];
+}
+
+// Create a function that generates a random weather grid
+function generateWeatherGrid(numRows, numCols) {
+  // Create an empty grid to hold the weather conditions
+  const weatherGrid = [];
+
+  // Loop through each row and column in the grid
+  for (let row = 0; row < numRows; row++) {
+    // Create a new array to hold the weather conditions for this row
+    const rowWeather = [];
+    for (let col = 0; col < numCols; col++) {
+      // Choose a random weather condition from the array of possible conditions
+      const weatherIndex = Math.floor(Math.random() * Object.keys(WEATHER_CONDITIONS).length);
+      const weatherCondition = Object.keys(WEATHER_CONDITIONS)[weatherIndex];
+
+      // Add the weather condition to the row's array
+      rowWeather.push(weatherCondition);
+    }
+    // Add the row's array to the weatherGrid array
+    weatherGrid.push(rowWeather);
+  }
+
+  // Return the weatherGrid array
+  return weatherGrid;
+}
+
+// Create a function that applies the weather rules to the environment grid
+function applyWeatherRules(environmentGrid, weatherGrid) {
+  // Loop through each row and column in the grid
+  for (let row = 0; row < environmentGrid.length; row++) {
+    for (let col = 0; col < environmentGrid[row].length; col++) {
+      const environment = environmentGrid[row][col];
+      const weather = weatherGrid[row][col];
+
+      // Look up the growth rate for this environment based on the current weather
+      const growthRate = WEATHER_CONDITIONS[weather][environment];
+
+      // Apply the growth rate to the environment
+      environmentGrid[row][col] = Math.max(0, environment + growthRate);
+    }
+  }
+}
+
+// Create an array to hold the world environments
+const worldEnvironments = [];
+
+// Generate a list of environments and add them to the array
+for (let i = 0; i < 10; i++) {
+  const environment = generateEnvironment();
+  worldEnvironments.push(environment);
+}
